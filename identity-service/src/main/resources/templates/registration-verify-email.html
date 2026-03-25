@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Xác thực OTP - Bookstore</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f9f9;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #2c3e50;
+        }
+        .otp-code {
+            font-size: 28px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 20px 0;
+            letter-spacing: 4px;
+        }
+        p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Xác thực tài khoản Bookstore</h2>
+    <p>Xin chào, đây là mã OTP của bạn:</p>
+    <div class="otp-code">{{otp}}</div>
+    <p>Vui lòng nhập mã này để hoàn tất quá trình đăng ký.</p>
+    <p>Mã OTP sẽ hết hạn sau {{timeout}} phút.</p>
+</div>
+</body>
+</html>
