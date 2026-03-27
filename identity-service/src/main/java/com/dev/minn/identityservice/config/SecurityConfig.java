@@ -40,6 +40,15 @@ public class SecurityConfig {
     RsaKeyConfig rsaKeys;
     JwtService jwtService;
 
+    private final String[] PUBLIC_ENDPOINTS = {
+            "/auth/**",
+            "/public/**"
+    };
+
+    private final String[] SECURED_ENDPOINTS = {
+            "/auth/logout"
+    };
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -49,10 +58,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(request -> request
-                .requestMatchers(
-                        "/auth/**",
-                        "/**/public/*").permitAll()
-                .requestMatchers("/auth/logout").authenticated()
+                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
+                .requestMatchers(SECURED_ENDPOINTS).authenticated()
                 .anyRequest().authenticated()
         );
 
@@ -68,6 +75,7 @@ public class SecurityConfig {
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
         grantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();

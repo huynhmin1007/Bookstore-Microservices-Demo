@@ -13,10 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -63,6 +63,18 @@ public class AuthenticationController {
         return ResponseEntity.ok(ApiResponse.<AccountSummary>builder()
                 .data(authenticationService.confirmRegistration(request))
                 .message("Registration successful")
+                .build());
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("@iam.check('identity:account:delete') or #id == authentication.name")
+    public ResponseEntity<ApiResponse<Void>> deleteAccount(
+            @PathVariable String id
+    ) {
+        authenticationService.deleteAccount(UUID.fromString(id));
+
+        return ResponseEntity.ok(ApiResponse.<Void>builder()
+                .message("Account deleted successfully")
                 .build());
     }
 }

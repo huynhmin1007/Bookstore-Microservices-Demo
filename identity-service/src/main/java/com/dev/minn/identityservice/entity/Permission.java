@@ -22,13 +22,12 @@ public class Permission extends BaseEntity<UUID> {
     @Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
     UUID id;
 
-    /**
-     * Unique permission name, e.g. "READ_USERS", "DELETE_ORDER".
-     * Convention: {ACTION}_{RESOURCE} — all uppercase.
-     */
-    @Column(name = "name", unique = true, nullable = false)
+    // It will hold values like: "*:*:*", "identity:account:read", "order:*"
+    // service:resource:action
+    @Column(unique = true, nullable = false, length = 100)
     String name;
 
+    // E.g., "Grants full administrative access to all services"
     @Column(name = "description")
     String description;
 }

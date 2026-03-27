@@ -39,6 +39,7 @@ Thumbs.db
 # Secret YAML configs
 application.yaml
 *.secret.yaml
+certs
 
 # =========================
 # Node / Frontend (nếu có)

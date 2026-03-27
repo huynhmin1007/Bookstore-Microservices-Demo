@@ -6,6 +6,7 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.proxy.HibernateProxy;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,6 +14,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -25,11 +27,15 @@ public abstract class BaseEntity<T extends Serializable> {
 
     @CreatedDate
     @Column(name = "created_at", updatable = false, nullable = false)
-    LocalDateTime createdAt;
+    Instant createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    LocalDateTime updatedAt;
+    Instant updatedAt;
+
+    @Setter(AccessLevel.PUBLIC)
+    @Column(name = "deleted", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    boolean deleted;
 
     public abstract T getId();
 

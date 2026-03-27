@@ -13,7 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AccountSummary {
+public class AccountDetail {
 
     String id;
     String email;
