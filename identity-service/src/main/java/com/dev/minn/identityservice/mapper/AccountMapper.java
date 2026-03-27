@@ -1,6 +1,7 @@
 package com.dev.minn.identityservice.mapper;
 
 import com.dev.minn.identityservice.dto.PendingAccountInfo;
+import com.dev.minn.identityservice.dto.response.AccountDetail;
 import com.dev.minn.identityservice.dto.response.AccountSummary;
 import com.dev.minn.identityservice.entity.Account;
 import com.dev.minn.identityservice.entity.Role;
@@ -19,6 +20,8 @@ public interface AccountMapper {
     Account toEntity(PendingAccountInfo info);
 
     AccountSummary toSummary(Account account);
+
+    AccountDetail toDetail(Account account);
 
     default List<String> mapRoles(Set<AccountRole> roles) {
         if (roles == null) return Collections.emptyList();

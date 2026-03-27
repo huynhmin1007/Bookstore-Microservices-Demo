@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -129,5 +130,15 @@ public class AuthenticationService {
         );
 
         return accountMapper.toSummary(account);
+    }
+
+    @Transactional
+    public void deleteAccount(UUID accountId) {
+        Account account = accountRepository.getReferenceById(accountId);
+
+        if(account == null)
+            throw CodeException.USER_NOT_FOUND.throwException();
+
+        account.setDeleted(true);
     }
 }

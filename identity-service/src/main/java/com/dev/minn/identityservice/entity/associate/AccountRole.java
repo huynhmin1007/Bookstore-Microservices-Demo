@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.proxy.HibernateProxy;
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -45,9 +46,9 @@ public class AccountRole {
     @Column(name = "assigned_at", nullable = false, updatable = false)
     Instant assignedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_by")
-    Account assignedBy;
+    @CreatedBy
+    @Column(name = "assigned_by", updatable = false)
+    String assignedBy;
 
     @Override
     public final boolean equals(Object o) {

@@ -2,6 +2,7 @@ package com.dev.minn.identityservice.exception;
 
 import com.dev.minn.identityservice.dto.ApiError;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +45,18 @@ public class GlobalExceptionHandler {
                 .body(ApiError.builder()
                         .code(CodeException.INTERNAL_ERROR.getCode())
                         .message(CodeException.INTERNAL_ERROR.getMessage())
+                        .build());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDeniedException(AccessDeniedException e) {
+        CodeException codeException = CodeException.UNAUTHORIZED;
+
+        return ResponseEntity
+                .status(codeException.getStatus())
+                .body(ApiError.builder()
+                        .code(codeException.getCode())
+                        .message(codeException.getMessage())
                         .build());
     }
 }

@@ -1,10 +1,10 @@
 package com.dev.minn.identityservice.service;
 
 import com.dev.minn.identityservice.config.RsaKeyConfig;
-import com.dev.minn.identityservice.dto.response.AuthenticationResponse;
 import com.dev.minn.identityservice.entity.Account;
 import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
+import com.dev.minn.identityservice.repository.PermissionRepository;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JOSEObjectType;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -13,13 +13,11 @@ import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import io.netty.util.Timeout;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -51,6 +49,8 @@ public class JwtService {
     RsaKeyConfig rsaKeys;
     RedisService redisService;
 
+    PermissionRepository permissionRepository;
+
     public String generateToken(Account account, TokenType type) {
         try {
             JWSHeader header = new JWSHeader.Builder(JWSAlgorithm.RS256)
@@ -63,12 +63,12 @@ public class JwtService {
 
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .issuer(ISSUER)
-                    .subject(account.getEmail())
+                    .subject(account.getId().toString())
                     .issueTime(Date.from(now))
                     .expirationTime(Date.from(now.plusSeconds(validity)))
                     .jwtID(UUID.randomUUID().toString())
                     .claim("scope", buildScope(account))
-                    .claim("accountId", account.getId().toString())
+                    .claim("email", account.getEmail())
                     .claim("tokenType", isAccessToken ? "access" : "refresh")
                     .build();
 
@@ -91,7 +91,7 @@ public class JwtService {
             boolean isSignatureValid = signedJWT.verify(verifier);
             boolean isNotExpired = new Date().before(claimsSet.getExpirationTime());
 
-            if(!isSignatureValid || !isNotExpired) {
+            if (!isSignatureValid || !isNotExpired) {
                 throw new AppException(CodeException.TOKEN_INVALID);
             }
 
@@ -100,7 +100,7 @@ public class JwtService {
 
             boolean isBusinessValid = validateBusinessRules(jti, tokenTypeStr, expectedTokenType);
 
-            if(!isBusinessValid) {
+            if (!isBusinessValid) {
                 throw new AppException(CodeException.TOKEN_INVALID);
             }
 
@@ -163,21 +163,14 @@ public class JwtService {
     }
 
     private String buildScope(Account account) {
-        StringJoiner joiner = new StringJoiner(" ");
+        Set<String> permissions = permissionRepository.findAllPermissionNamesByAccountId(account.getId());
 
-        if(!CollectionUtils.isEmpty(account.getRolesAsRole())) {
-            account.getRolesAsRole().forEach(role -> {
-                joiner.add("ROLE_" + role.getName());
-
-                if(!CollectionUtils.isEmpty(role.getPermissionsAsPermission())) {
-                    role.getPermissionsAsPermission().forEach(permission -> {
-                        joiner.add(permission.getName());
-                    });
-                }
-            });
+        if (CollectionUtils.isEmpty(permissions)) {
+            return "";
         }
 
-        return joiner.toString();
+        // Output example: "*:*:* identity:account:read order:*:write"
+        return String.join(" ", permissions);
     }
 
     public enum TokenType {
