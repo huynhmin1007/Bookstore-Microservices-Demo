@@ -12,7 +12,11 @@ public class AccountStatusConverter implements AttributeConverter<AccountStatus,
     }
 
     @Override
-    public AccountStatus convertToEntityAttribute(Integer status) {
-        return AccountStatus.fromStatus(status);
+    public AccountStatus convertToEntityAttribute(Integer value) {
+        AccountStatus status = AccountStatus.fromStatus(value);
+        if(status == null)
+            throw new IllegalArgumentException("Invalid status value: " + value);
+
+        return status;
     }
 }
