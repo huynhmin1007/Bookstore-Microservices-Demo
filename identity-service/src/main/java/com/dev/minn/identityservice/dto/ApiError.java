@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.AccessLevel;
 
 import java.util.List;
+import java.util.Map;
 
 @Builder
 @Getter
@@ -16,5 +17,5 @@ public class ApiError {
 
     int code;
     String message;
-    List<String> errors;
+    Map<String, String> errors;
 }

@@ -3,8 +3,6 @@ package com.dev.minn.identityservice.constant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import static org.yaml.snakeyaml.nodes.Tag.STR;
-
 @AllArgsConstructor
 @Getter
 public enum AccountStatus {
@@ -19,6 +17,19 @@ public enum AccountStatus {
                 return accountStatus;
             }
         }
-        throw new IllegalArgumentException("Invalid status: " + status);
+        return null;
+    }
+
+
+    public static AccountStatus fromStatus(String status) {
+        if (status == null)
+            return null;
+
+        for (AccountStatus accountStatus : AccountStatus.values()) {
+            if (accountStatus.name().equalsIgnoreCase(status)) {
+                return accountStatus;
+            }
+        }
+        return null;
     }
 }
