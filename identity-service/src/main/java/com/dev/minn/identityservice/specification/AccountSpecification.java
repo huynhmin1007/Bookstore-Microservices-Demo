@@ -26,6 +26,8 @@ public class AccountSpecification {
 
             if (status != null) {
                 predicates.add(cb.equal(root.get("status"), status));
+            } else {
+                predicates.add(cb.notEqual(root.get("status"), AccountStatus.DELETED));
             }
 
             if (StringUtils.hasText(role)) {

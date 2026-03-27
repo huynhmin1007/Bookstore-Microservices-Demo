@@ -33,10 +33,6 @@ public abstract class BaseEntity<T extends Serializable> {
     @Column(name = "updated_at", nullable = false)
     Instant updatedAt;
 
-    @Setter(AccessLevel.PUBLIC)
-    @Column(name = "deleted", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
-    boolean deleted;
-
     public abstract T getId();
 
     @Override

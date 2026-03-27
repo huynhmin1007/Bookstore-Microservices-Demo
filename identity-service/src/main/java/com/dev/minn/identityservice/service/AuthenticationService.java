@@ -15,6 +15,8 @@ import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
 import com.dev.minn.identityservice.mapper.AccountMapper;
 import com.dev.minn.identityservice.repository.AccountRepository;
+import com.dev.minn.identityservice.utils.SecurityUtils;
+import io.netty.handler.codec.CodecException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -133,12 +136,20 @@ public class AuthenticationService {
     }
 
     @Transactional
-    public void deleteAccount(UUID accountId) {
-        Account account = accountRepository.getReferenceById(accountId);
+    public void softDelete(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(CodeException.USER_NOT_FOUND::throwException);
 
-        if(account == null)
-            throw CodeException.USER_NOT_FOUND.throwException();
+        if(account.getStatus() == AccountStatus.DELETED)
+            throw new AppException(CodeException.ACCOUNT_DELETED);
 
-        account.setDeleted(true);
+        account.setStatus(AccountStatus.DELETED);
+        account.setDeletedAt(Instant.now());
+        account.setDeletedBy(SecurityUtils.getCurrentAccountId());
+        account.setEmail(account.getEmail() + ".deleted." + UUID.randomUUID().toString());
+
+        jwtService.lockSession(accountId.toString());
+
+        accountRepository.save(account);
     }
 }

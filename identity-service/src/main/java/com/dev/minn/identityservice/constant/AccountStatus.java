@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum AccountStatus {
 
-    INACTIVE(0), ACTIVE(1), BANNED(2);
+    INACTIVE(0), ACTIVE(1), BANNED(2), DELETED(3);
 
     private final int status;
 

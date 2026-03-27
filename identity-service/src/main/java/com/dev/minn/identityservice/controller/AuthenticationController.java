@@ -71,7 +71,7 @@ public class AuthenticationController {
     public ResponseEntity<ApiResponse<Void>> deleteAccount(
             @PathVariable String id
     ) {
-        authenticationService.deleteAccount(UUID.fromString(id));
+        authenticationService.softDelete(UUID.fromString(id));
 
         return ResponseEntity.ok(ApiResponse.<Void>builder()
                 .message("Account deleted successfully")
