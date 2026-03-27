@@ -12,14 +12,11 @@ import com.dev.minn.identityservice.specification.AccountSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -35,11 +32,14 @@ public class AccountService {
     AccountMapper accountMapper;
 
     public AccountDetail getDetailAccount(UUID accountId) {
-        return accountMapper.toDetail(
-                accountRepository
-                        .findDetail_ById(accountId)
-                        .orElseThrow(CodeException.USER_NOT_FOUND::throwException)
-        );
+        Account account = accountRepository
+                .findDetail_ById(accountId)
+                .orElseThrow(CodeException.USER_NOT_FOUND::throwException);
+
+        if (account.getStatus() == AccountStatus.DELETED)
+            throw CodeException.USER_NOT_FOUND.throwException();
+
+        return accountMapper.toDetail(account);
     }
 
     public Page<AccountSummary> searchAccounts(AccountSearchRequest request) {

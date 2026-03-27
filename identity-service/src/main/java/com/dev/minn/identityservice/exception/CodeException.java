@@ -25,6 +25,7 @@ public enum CodeException {
     OTP_INVALID(2006, "OTP is invalid or expired", HttpStatus.UNAUTHORIZED),
     OTP_EXPIRED(2007, "OTP has expired", HttpStatus.UNAUTHORIZED),
     REGISTRATION_PENDING(2008, "Registration already pending verification", HttpStatus.CONFLICT),
+    ACCOUNT_DELETED(2009, "Account has been deleted", HttpStatus.GONE),
 
     // 3xxx — Role & Permission
     ROLE_NOT_FOUND(3001, "Role not found", HttpStatus.NOT_FOUND),

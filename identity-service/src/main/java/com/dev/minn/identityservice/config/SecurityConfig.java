@@ -100,10 +100,7 @@ public class SecurityConfig {
     }
 
     private OAuth2TokenValidatorResult customValidator(Jwt jwt) {
-        String jti = jwt.getId();
-        String tokenType = jwt.getClaimAsString("tokenType");
-
-        boolean isValid = jwtService.validateBusinessRules(jti, tokenType, JwtService.TokenType.ACCESS);
+        boolean isValid = jwtService.validateBusinessRules(jwt, JwtService.TokenType.ACCESS);
 
         if (!isValid) {
             return OAuth2TokenValidatorResult.failure(

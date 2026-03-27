@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UuidGenerator;
+import org.springframework.data.annotation.CreatedBy;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,8 +37,14 @@ public class Account extends BaseEntity<UUID> {
     String password;
 
     @Builder.Default
-    @Column(name = "status", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    @Column(name = "status", nullable = false)
     AccountStatus status = AccountStatus.INACTIVE;
+
+    @Column(name = "deleted_at")
+    Instant deletedAt;
+
+    @Column(name = "deleted_by")
+    String deletedBy;
 
     @OneToMany(
             mappedBy = "account",
