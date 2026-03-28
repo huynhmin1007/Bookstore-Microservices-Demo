@@ -47,8 +47,8 @@ public class OtpService {
         return OTP_PREFIX + action.name().toLowerCase() + ":" + email;
     }
 
-    public boolean isOtpCached(String email) {
-        return redisService.exists(OTP_PREFIX + email);
+    public boolean isOtpCached(String email, Action action) {
+        return redisService.exists(buildOtpKey(action, email));
     }
 
     public enum Action {

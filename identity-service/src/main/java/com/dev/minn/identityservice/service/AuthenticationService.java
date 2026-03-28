@@ -85,7 +85,7 @@ public class AuthenticationService {
         if (accountRepository.existsByEmail(email))
             throw CodeException.EMAIL_ALREADY_EXISTS.throwException();
 
-        if (otpService.isOtpCached(email))
+        if (otpService.isOtpCached(email, OtpService.Action.REGISTER))
             throw CodeException.REGISTRATION_PENDING.throwException();
 
         PendingAccountInfo pendingInfo = PendingAccountInfo.builder()
