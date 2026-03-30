@@ -1,4 +1,4 @@
-package com.dev.minn.profile_service;
+package com.dev.minn.profileservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

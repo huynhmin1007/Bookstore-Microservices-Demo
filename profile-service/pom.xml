@@ -32,7 +32,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-neo4j</artifactId>
+			<artifactId>spring-boot-starter-data-neo4j</artifactId>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/com.github.f4b6a3/uuid-creator -->
+		<dependency>
+			<groupId>com.github.f4b6a3</groupId>
+			<artifactId>uuid-creator</artifactId>
+			<version>6.1.1</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

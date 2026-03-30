@@ -1,4 +1,4 @@
-package com.dev.minn.profile_service;
+package com.dev.minn.profileservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
