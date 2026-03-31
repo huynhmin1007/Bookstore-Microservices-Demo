@@ -1,10 +1,13 @@
 package com.dev.minn.identityservice.entity;
 
+import com.dev.minn.identityservice.entity.associate.RolePermission;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -30,4 +33,8 @@ public class Permission extends BaseEntity<UUID> {
     // E.g., "Grants full administrative access to all services"
     @Column(name = "description")
     String description;
+
+    @OneToMany(mappedBy = "permission")
+    @Builder.Default
+    Set<RolePermission> roles = new HashSet<>();
 }

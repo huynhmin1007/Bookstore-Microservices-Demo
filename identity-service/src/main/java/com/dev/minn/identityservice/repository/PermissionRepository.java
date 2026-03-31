@@ -23,4 +23,11 @@ public interface PermissionRepository extends JpaRepository<Permission, UUID> {
     Set<String> findAllPermissionNamesByAccountId(@Param("accountId") UUID accountId);
 
     Optional<Permission> findByName(String name);
+
+    @Query("""
+            SELECT p FROM Permission p
+            JOIN p.roles pr
+            WHERE pr.role.id = :roleId
+            """)
+    Set<Permission> findAllPermissionByRole(@Param("roleId") UUID roleId);
 }
