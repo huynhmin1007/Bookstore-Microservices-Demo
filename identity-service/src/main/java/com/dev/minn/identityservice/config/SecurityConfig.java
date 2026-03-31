@@ -42,7 +42,8 @@ public class SecurityConfig {
 
     private final String[] PUBLIC_ENDPOINTS = {
             "/auth/**",
-            "/public/**"
+            "/public/**",
+            "/jwt/.well-known/jwks.json"
     };
 
     private final String[] SECURED_ENDPOINTS = {
