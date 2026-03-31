@@ -3,6 +3,7 @@ package com.dev.minn.identityservice.config;
 import com.dev.minn.identityservice.dto.ApiError;
 import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
+import com.dev.minn.identityservice.filter.HeaderAuthenticationFilter;
 import com.dev.minn.identityservice.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tools.jackson.databind.ObjectMapper;
 
 @Configuration
@@ -36,6 +38,8 @@ import tools.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
+
+    HeaderAuthenticationFilter headerAuthenticationFilter;
 
     RsaKeyConfig rsaKeys;
     JwtService jwtService;
@@ -69,6 +73,8 @@ public class SecurityConfig {
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint()));
+
+        http.addFilterBefore(headerAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

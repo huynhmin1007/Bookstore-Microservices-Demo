@@ -27,6 +27,7 @@ public class JwtBlacklistFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        log.info("JwtBlacklistFilter");
         return exchange.getPrincipal()
                 .cast(JwtAuthenticationToken.class)
                 .map(auth -> auth.getToken().getId())
