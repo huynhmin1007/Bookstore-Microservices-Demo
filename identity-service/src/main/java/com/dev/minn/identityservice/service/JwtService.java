@@ -2,6 +2,7 @@ package com.dev.minn.identityservice.service;
 
 import com.dev.minn.identityservice.config.RsaKeyConfig;
 import com.dev.minn.identityservice.entity.Account;
+import com.dev.minn.identityservice.entity.Role;
 import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
 import com.dev.minn.identityservice.repository.PermissionRepository;
@@ -213,14 +214,22 @@ public class JwtService {
     }
 
     private String buildScope(Account account) {
-        Set<String> permissions = permissionRepository.findAllPermissionNamesByAccountId(account.getId());
+//        Set<String> permissions = permissionRepository.findAllPermissionNamesByAccountId(account.getId());
+//
+//        if (CollectionUtils.isEmpty(permissions)) {
+//            return "";
+//        }
+//
+//        // Output example: "*:*:* identity:account:read order:*:write"
+//        return String.join(" ", permissions);
 
-        if (CollectionUtils.isEmpty(permissions)) {
+        Set<Role> roles = account.getRolesAsRole();
+
+        if(CollectionUtils.isEmpty(roles))
             return "";
-        }
 
-        // Output example: "*:*:* identity:account:read order:*:write"
-        return String.join(" ", permissions);
+        return String.join(" ", roles.stream()
+                .map(role -> "ROLE_" + role.getName()).toList());
     }
 
     public enum TokenType {
