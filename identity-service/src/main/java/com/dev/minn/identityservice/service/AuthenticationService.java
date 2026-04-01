@@ -1,5 +1,8 @@
 package com.dev.minn.identityservice.service;
 
+import com.dev.minn.grpc.profile.CreateProfileRequest;
+import com.dev.minn.grpc.profile.CreateProfileResponse;
+import com.dev.minn.grpc.profile.ProfileServiceGrpcGrpc;
 import com.dev.minn.identityservice.client.ProfileClient;
 import com.dev.minn.identityservice.client.dto.UserProfileCreateRequest;
 import com.dev.minn.identityservice.client.dto.UserProfileSummary;
@@ -53,7 +56,13 @@ public class AuthenticationService {
 
     AccountMapper accountMapper;
 
+    private static final String PENDING_ACCOUNT_PREFIX = "registration:pending:";
+    private static final long OTP_INFO_TTL = 5 * 60;
+    private static final long PENDING_INFO_TTL = 7 * 60;
+
     ProfileClient profileClient;
+
+    ProfileServiceGrpcGrpc.ProfileServiceGrpcBlockingStub profileGrpcStub;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Account account = accountRepository.findByEmail(request.getEmail())
@@ -78,10 +87,6 @@ public class AuthenticationService {
         jwtService.revokeToken(jwtService.verifyToken(request.getAccessToken(), JwtService.TokenType.ACCESS));
         jwtService.revokeToken(jwtService.verifyToken(request.getRefreshToken(), JwtService.TokenType.REFRESH));
     }
-
-    private static final String PENDING_ACCOUNT_PREFIX = "registration:pending:";
-    private static final long OTP_INFO_TTL = 5 * 60;
-    private static final long PENDING_INFO_TTL = 7 * 60;
 
     public void initiateRegistration(RegistrationInitRequest request) {
         String email = request.getEmail();
@@ -133,7 +138,16 @@ public class AuthenticationService {
 
         accountRepository.save(account);
 
-        createProfile_OpenFeign(
+//        createProfile_OpenFeign(
+//                account.getId(),
+//                UserProfileCreateRequest.builder()
+//                        .userId(account.getId().toString())
+//                        .firstName("Huỳnh")
+//                        .lastName("Minh")
+//                        .build()
+//        );
+
+        createProfile_Grpc(
                 account.getId(),
                 UserProfileCreateRequest.builder()
                         .userId(account.getId().toString())
@@ -160,6 +174,25 @@ public class AuthenticationService {
             );
             accountRepository.getReferenceById(accountId).setStatus(AccountStatus.ACTIVE);
             log.info("Create profile success: " + response.getData());
+        } catch (Exception e) {
+            accountRepository.deleteById(accountId);
+            log.error("Failure when to call Profile Service: {}", e.getMessage());
+            throw new RuntimeException("Create profile failed, delete account: " + accountId.toString());
+        }
+    }
+
+    @Transactional
+    public void createProfile_Grpc(UUID accountId, UserProfileCreateRequest request) {
+        try {
+            CreateProfileRequest grpcRequest = CreateProfileRequest.newBuilder()
+                    .setAccountId(accountId.toString())
+                    .setFirstName(request.getFirstName())
+                    .setLastName(request.getLastName())
+                    .build();
+
+            CreateProfileResponse response = profileGrpcStub.createProfile(grpcRequest);
+            log.info("Create profile success: " + response.getStatus());
+            accountRepository.getReferenceById(accountId).setStatus(AccountStatus.ACTIVE);
         } catch (Exception e) {
             accountRepository.deleteById(accountId);
             log.error("Failure when to call Profile Service: {}", e.getMessage());

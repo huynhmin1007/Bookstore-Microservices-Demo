@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+// Định nghĩa package cho code Java sẽ được tự động sinh ra
+option java_multiple_files = true;
+option java_package = "com.dev.minn.grpc.profile";
+
+// 1. Khai báo Service
+service ProfileServiceGrpc {
+  rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse);
+}
+
+// 2. Khai báo dữ liệu gửi đi (Request)
+message CreateProfileRequest {
+  string account_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  // Truyền ngày sinh dạng String (YYYY-MM-DD) vì Protobuf không có kiểu LocalDate
+  string dob = 4;
+}
+
+// 3. Khai báo dữ liệu nhận về (Response)
+message CreateProfileResponse {
+  string profile_id = 1;
+  string status = 2;
+}
