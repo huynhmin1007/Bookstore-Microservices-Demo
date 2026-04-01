@@ -1,6 +1,7 @@
 package com.dev.minn.profileservice.exception;
 
 import com.dev.minn.profileservice.dto.ApiError;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
@@ -43,6 +45,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiError> handleUnexpected(Exception e) {
+        log.error("Unexpected error", e);
         return ResponseEntity
                 .internalServerError()
                 .body(ApiError.builder()

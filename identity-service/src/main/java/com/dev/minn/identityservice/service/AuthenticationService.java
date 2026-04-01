@@ -1,6 +1,10 @@
 package com.dev.minn.identityservice.service;
 
+import com.dev.minn.identityservice.client.ProfileClient;
+import com.dev.minn.identityservice.client.dto.UserProfileCreateRequest;
+import com.dev.minn.identityservice.client.dto.UserProfileSummary;
 import com.dev.minn.identityservice.constant.AccountStatus;
+import com.dev.minn.identityservice.dto.ApiResponse;
 import com.dev.minn.identityservice.dto.PendingAccountInfo;
 import com.dev.minn.identityservice.dto.request.AuthenticationRequest;
 import com.dev.minn.identityservice.dto.request.LogoutRequest;
@@ -16,7 +20,6 @@ import com.dev.minn.identityservice.exception.CodeException;
 import com.dev.minn.identityservice.mapper.AccountMapper;
 import com.dev.minn.identityservice.repository.AccountRepository;
 import com.dev.minn.identityservice.utils.SecurityUtils;
-import io.netty.handler.codec.CodecException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -50,13 +53,15 @@ public class AuthenticationService {
 
     AccountMapper accountMapper;
 
+    ProfileClient profileClient;
+
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
         Account account = accountRepository.findByEmail(request.getEmail())
                 .orElseThrow(CodeException.USER_NOT_FOUND::throwException);
 
         boolean isMatchingPassword = passwordEncoder.matches(request.getPassword(), account.getPassword());
 
-        if(!isMatchingPassword)
+        if (!isMatchingPassword)
             throw CodeException.INVALID_CREDENTIALS.throwException();
 
         String accessToken = jwtService.generateToken(account, JwtService.TokenType.ACCESS);
@@ -124,9 +129,18 @@ public class AuthenticationService {
 
         Account account = accountMapper.toEntity(accountInfo);
         account.addRole(roleService.findRoleByName("USER"));
-        account.setStatus(AccountStatus.ACTIVE);
+        account.setStatus(AccountStatus.PENDING);
 
         accountRepository.save(account);
+
+        createProfile_OpenFeign(
+                account.getId(),
+                UserProfileCreateRequest.builder()
+                        .userId(account.getId().toString())
+                        .firstName("Huỳnh")
+                        .lastName("Minh")
+                        .build()
+        );
 
         eventPublisher.publishEvent(
                 new SendWelcomeEmailEvent(account.getEmail())
@@ -136,11 +150,29 @@ public class AuthenticationService {
     }
 
     @Transactional
+    public void createProfile_OpenFeign(UUID accountId, UserProfileCreateRequest request) {
+        try {
+            ApiResponse<UserProfileSummary> response = profileClient.createProfile(
+                    accountId.toString(),
+                    "ROLE_SYSTEM",
+                    "*:*:*",
+                    request
+            );
+            accountRepository.getReferenceById(accountId).setStatus(AccountStatus.ACTIVE);
+            log.info("Create profile success: " + response.getData());
+        } catch (Exception e) {
+            accountRepository.deleteById(accountId);
+            log.error("Failure when to call Profile Service: {}", e.getMessage());
+            throw new RuntimeException("Create profile failed, delete account: " + accountId.toString());
+        }
+    }
+
+    @Transactional
     public void softDelete(UUID accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(CodeException.USER_NOT_FOUND::throwException);
 
-        if(account.getStatus() == AccountStatus.DELETED)
+        if (account.getStatus() == AccountStatus.DELETED)
             throw new AppException(CodeException.ACCOUNT_DELETED);
 
         account.setStatus(AccountStatus.DELETED);
@@ -153,3 +185,4 @@ public class AuthenticationService {
         accountRepository.save(account);
     }
 }
+
