@@ -1,6 +1,7 @@
 package com.dev.minn.identityservice.entity;
 
 import com.dev.minn.identityservice.entity.associate.RolePermission;
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -21,7 +22,6 @@ import java.util.UUID;
 public class Permission extends BaseEntity<UUID> {
 
     @Id
-    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
     UUID id;
 
@@ -37,4 +37,11 @@ public class Permission extends BaseEntity<UUID> {
     @OneToMany(mappedBy = "permission")
     @Builder.Default
     Set<RolePermission> roles = new HashSet<>();
+
+    @PrePersist
+    public void ensureId() {
+        if (id == null) {
+            id = UuidCreator.getTimeOrderedEpoch();
+        }
+    }
 }

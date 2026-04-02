@@ -4,29 +4,30 @@ import com.dev.minn.identityservice.entity.Permission;
 import com.dev.minn.identityservice.entity.Role;
 import com.dev.minn.identityservice.repository.PermissionRepository;
 import com.dev.minn.identityservice.repository.RoleRepository;
-import com.dev.minn.identityservice.service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJacksonJsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer; // <-- Tên đúng có số 2
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-// Notice the new Jackson 3 imports
-import tools.jackson.databind.DefaultTyping;
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import tools.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -37,7 +38,6 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
@@ -45,13 +45,12 @@ public class RedisConfig {
                 .allowIfBaseType(Object.class)
                 .build();
 
-        // THE JACKSON 3 WAY: Chain all configurations in the Builder
-        ObjectMapper redisObjectMapper = JsonMapper.builder()
-                .findAndAddModules() // Automatically finds modules for Java 8 Dates (Instant, LocalDate)
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
                 .activateDefaultTyping(validator, DefaultTyping.NON_FINAL)
                 .build();
 
-        GenericJacksonJsonRedisSerializer jsonSerializer = new GenericJacksonJsonRedisSerializer(redisObjectMapper);
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
@@ -66,8 +65,8 @@ public class RedisConfig {
     @Bean
     public ApplicationRunner clearRedisOnStartup(RedisTemplate<String, Object> redisTemplate) {
         return args -> {
-            redisTemplate.getConnectionFactory().getConnection().flushDb(); // Xóa tất cả dữ liệu trong Redis
-            System.out.println("Redis cache cleared on startup.");
+            redisTemplate.getConnectionFactory().getConnection().serverCommands().flushDb();
+            log.info("Redis cache cleared on startup.");
 
             List<Role> roles = roleRepository.findAll();
 
@@ -79,9 +78,10 @@ public class RedisConfig {
 
                 String redisKey = "role_permissions:ROLE_" + r.getName();
 
-                if(!permissions.isEmpty())
-                    redisTemplate.opsForSet()
-                            .add(redisKey, permissions.toArray(new String[0]));
+                if(!permissions.isEmpty()) {
+                    redisTemplate.opsForSet().add(redisKey, permissions.toArray(new String[0]));
+                    log.info("Loaded {} permissions for role {}", permissions.size(), r.getName());
+                }
             }
         };
     }

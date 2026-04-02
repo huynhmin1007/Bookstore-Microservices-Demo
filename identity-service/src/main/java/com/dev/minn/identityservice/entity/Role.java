@@ -1,6 +1,7 @@
 package com.dev.minn.identityservice.entity;
 
 import com.dev.minn.identityservice.entity.associate.RolePermission;
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,7 +23,6 @@ import java.util.stream.Collectors;
 public class Role extends BaseEntity<UUID> {
 
     @Id
-    @UuidGenerator(style = UuidGenerator.Style.VERSION_7)
     @Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
     UUID id;
 
@@ -53,5 +53,12 @@ public class Role extends BaseEntity<UUID> {
 
     public void removePermission(Permission permission) {
         permissions.removeIf(rp -> rp.getPermission().getId().equals(permission.getId()));
+    }
+
+    @PrePersist
+    public void ensureId() {
+        if (id == null) {
+            id = UuidCreator.getTimeOrderedEpoch();
+        }
     }
 }

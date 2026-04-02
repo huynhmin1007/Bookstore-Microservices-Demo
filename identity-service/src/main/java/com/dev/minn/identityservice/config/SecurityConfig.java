@@ -5,6 +5,7 @@ import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
 import com.dev.minn.identityservice.filter.HeaderAuthenticationFilter;
 import com.dev.minn.identityservice.service.JwtService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,7 +31,6 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity

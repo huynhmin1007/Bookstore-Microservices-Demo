@@ -28,6 +28,8 @@ public class HeaderAuthenticationFilter extends OncePerRequestFilter {
         String rolesHeader = request.getHeader("X-User-Roles");
         String permissionsHeader = request.getHeader("X-User-Permissions");
 
+        log.info("X-Account-Id: {}, X-User-Roles: {}, X-User-Permissions: {}", accountId, rolesHeader, permissionsHeader);
+
         if(StringUtils.hasText(accountId)) {
             List<GrantedAuthority> authorities = new ArrayList<>();
 

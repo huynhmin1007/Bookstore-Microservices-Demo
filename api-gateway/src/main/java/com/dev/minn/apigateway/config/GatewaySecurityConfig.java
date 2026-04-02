@@ -2,6 +2,8 @@ package com.dev.minn.apigateway.config;
 
 import com.dev.minn.apigateway.dto.ApiError;
 import com.dev.minn.apigateway.exception.CodeException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.boot.json.JsonParseException;
@@ -18,11 +20,9 @@ import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import reactor.core.publisher.Mono;
-import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -82,7 +82,8 @@ public class GatewaySecurityConfig {
                 DataBuffer buffer = response.bufferFactory().wrap(bytes);
 
                 return response.writeWith(Mono.just(buffer));
-            } catch (JsonParseException e) {
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
                 return Mono.error(e);
             }
         };

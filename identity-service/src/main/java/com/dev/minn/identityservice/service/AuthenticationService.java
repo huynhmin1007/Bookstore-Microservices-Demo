@@ -26,7 +26,9 @@ import com.dev.minn.identityservice.utils.SecurityUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
+import net.devh.boot.grpc.client.inject.GrpcClient;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,6 +64,8 @@ public class AuthenticationService {
 
     ProfileClient profileClient;
 
+    @NonFinal
+    @GrpcClient("profile-service")
     ProfileServiceGrpcGrpc.ProfileServiceGrpcBlockingStub profileGrpcStub;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {
