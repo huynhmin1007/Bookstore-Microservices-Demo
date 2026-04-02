@@ -13,6 +13,7 @@ public class UserProfileSummary {
 
     String id;
     String userId;
+    String email;
     String firstName;
     String lastName;
 }

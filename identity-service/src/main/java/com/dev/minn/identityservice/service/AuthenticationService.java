@@ -16,6 +16,7 @@ import com.dev.minn.identityservice.dto.request.RegistrationVerifyRequest;
 import com.dev.minn.identityservice.dto.response.AccountSummary;
 import com.dev.minn.identityservice.dto.response.AuthenticationResponse;
 import com.dev.minn.identityservice.entity.Account;
+import com.dev.minn.identityservice.event.AccountCreatedEvent;
 import com.dev.minn.identityservice.event.SendRegistrationOtpEmailEvent;
 import com.dev.minn.identityservice.event.SendWelcomeEmailEvent;
 import com.dev.minn.identityservice.exception.AppException;
@@ -29,6 +30,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,8 +64,13 @@ public class AuthenticationService {
     private static final long OTP_INFO_TTL = 5 * 60;
     private static final long PENDING_INFO_TTL = 7 * 60;
 
+    // RabbitMQ Approach
+     RabbitTemplate rabbitTemplate;
+
+    // OpenFeign Approach
     ProfileClient profileClient;
 
+    // gRPC Approach
     @NonFinal
     @GrpcClient("profile-service")
     ProfileServiceGrpcGrpc.ProfileServiceGrpcBlockingStub profileGrpcStub;
@@ -142,22 +149,15 @@ public class AuthenticationService {
 
         accountRepository.save(account);
 
-//        createProfile_OpenFeign(
-//                account.getId(),
-//                UserProfileCreateRequest.builder()
-//                        .userId(account.getId().toString())
-//                        .firstName("Huỳnh")
-//                        .lastName("Minh")
-//                        .build()
-//        );
-
-        createProfile_Grpc(
-                account.getId(),
-                UserProfileCreateRequest.builder()
-                        .userId(account.getId().toString())
-                        .firstName("Huỳnh")
-                        .lastName("Minh")
-                        .build()
+        rabbitTemplate.convertAndSend(
+                "identity-exchange",
+                "account.created",
+                new AccountCreatedEvent(
+                        account.getId().toString(),
+                        account.getEmail(),
+                        "Huỳnh",
+                        "Minh"
+                )
         );
 
         eventPublisher.publishEvent(
