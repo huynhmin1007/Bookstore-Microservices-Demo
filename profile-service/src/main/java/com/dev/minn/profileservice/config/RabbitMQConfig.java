@@ -1,5 +1,6 @@
 package com.dev.minn.profileservice.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
@@ -10,27 +11,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class RabbitMQConfig {
 
-    // 1. Khai báo Hộp thư (Queue) dành riêng cho Profile Service
-    @Bean
-    public Queue profileAccountCreatedQueue() {
-        return new Queue("profile.account.created.queue");
-    }
+    private final RabbitMQConfigProps props;
 
     @Bean
     public TopicExchange identityExchange() {
-        return new TopicExchange("identity-exchange");
+        return new TopicExchange(props.getExchange().getIdentity());
     }
 
-    // "Bất cứ tin nhắn nào vào identity-exchange mà có dán tem 'account.created'
-    // thì nhét hết vào hộp thư profile.account.created.queue cho tôi"
     @Bean
-    public Binding bindingAccountCreated(Queue profileAccountCreatedQueue, TopicExchange identityExchange) {
+    public Queue createdQueue() {
+        return new Queue(props.getQueue().getProfileCreated());
+    }
+
+    @Bean
+    public Binding bindCreated(Queue createdQueue, TopicExchange identityExchange) {
         return BindingBuilder
-                .bind(profileAccountCreatedQueue)
+                .bind(createdQueue)
                 .to(identityExchange)
-                .with("account.created");
+                .with(props.getRoutingKey().getAccountCreated());
     }
 
     @Bean

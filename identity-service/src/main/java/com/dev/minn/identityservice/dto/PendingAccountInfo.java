@@ -12,4 +12,6 @@ import lombok.experimental.FieldDefaults;
 public class PendingAccountInfo {
     String email;
     String hashedPassword;
+    String firstName;
+    String lastName;
 }

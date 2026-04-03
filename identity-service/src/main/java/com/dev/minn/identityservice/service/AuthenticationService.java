@@ -6,6 +6,8 @@ import com.dev.minn.grpc.profile.ProfileServiceGrpcGrpc;
 import com.dev.minn.identityservice.client.ProfileClient;
 import com.dev.minn.identityservice.client.dto.UserProfileCreateRequest;
 import com.dev.minn.identityservice.client.dto.UserProfileSummary;
+import com.dev.minn.identityservice.config.RabbitMQConfig;
+import com.dev.minn.identityservice.config.RabbitMQConfigProps;
 import com.dev.minn.identityservice.constant.AccountStatus;
 import com.dev.minn.identityservice.dto.ApiResponse;
 import com.dev.minn.identityservice.dto.PendingAccountInfo;
@@ -65,7 +67,8 @@ public class AuthenticationService {
     private static final long PENDING_INFO_TTL = 7 * 60;
 
     // RabbitMQ Approach
-     RabbitTemplate rabbitTemplate;
+    RabbitTemplate rabbitTemplate;
+    RabbitMQConfigProps props;
 
     // OpenFeign Approach
     ProfileClient profileClient;
@@ -149,14 +152,25 @@ public class AuthenticationService {
 
         accountRepository.save(account);
 
+//        rabbitTemplate.convertAndSend(
+//                "identity-exchange",
+//                "account.created",
+//                new AccountCreatedEvent(
+//                        account.getId().toString(),
+//                        account.getEmail(),
+//                        "Huỳnh",
+//                        "Minh"
+//                )
+//        );
+
         rabbitTemplate.convertAndSend(
-                "identity-exchange",
-                "account.created",
+               props.getExchange().getIdentity(),
+              props.getRoutingKey().getAccountCreated(),
                 new AccountCreatedEvent(
                         account.getId().toString(),
                         account.getEmail(),
-                        "Huỳnh",
-                        "Minh"
+                        accountInfo.getFirstName(),
+                        accountInfo.getLastName()
                 )
         );
 
@@ -219,6 +233,20 @@ public class AuthenticationService {
 
         jwtService.lockSession(accountId.toString());
 
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void hardDelete(UUID accountId) {
+        Account account = accountRepository.getReferenceById(accountId);
+        accountRepository.deleteById(accountId);
+    }
+
+    @Transactional
+    public void changeStatus(UUID accountId, AccountStatus status) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(CodeException.USER_NOT_FOUND::throwException);
+        account.setStatus(status);
         accountRepository.save(account);
     }
 }

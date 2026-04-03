@@ -20,4 +20,10 @@ public class RegistrationInitRequest {
 
     @Password
     String password;
+
+    @NotBlank(message = "first name must not be empty")
+    String firstName;
+
+    @NotBlank(message = "last name must not be empty")
+    String lastName;
 }

@@ -62,7 +62,7 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(ApiResponse.<AccountSummary>builder()
                 .data(authenticationService.confirmRegistration(request))
-                .message("Registration successful")
+                .message("Registration successful. Profile is initializing. Please wait...")
                 .build());
     }
 
