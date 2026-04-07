@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.json.JsonParseException;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Configuration
 @EnableWebFluxSecurity
 @RequiredArgsConstructor
@@ -38,7 +40,7 @@ public class GatewaySecurityConfig {
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(
             ServerHttpSecurity http,
-            ServerAuthenticationEntryPoint entryPoint) { // 1. Tiêm EntryPoint vào đây thông qua DI
+            ServerAuthenticationEntryPoint entryPoint) {
 
         http
                 .csrf(csrf -> csrf.disable())

@@ -1,0 +1,19 @@
+package com.dev.minn.notificationservice.annotation;
+
+import com.dev.minn.notificationservice.validator.EmailValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
+
+import java.lang.annotation.*;
+
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Constraint(validatedBy = EmailValidator.class)
+public @interface EmailValid {
+
+    String message() default "Email is invalid";
+
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}

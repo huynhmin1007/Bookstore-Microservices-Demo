@@ -30,21 +30,20 @@ public class ProfileEventListener {
     @RabbitListener(queues = "${app.rabbitmq.queue.profile-created}")
     public void handleAccountCreatedEvent(AccountCreatedEvent event) {
         try {
-//            userProfileService.createUserProfile(UserProfileCreateRequest.builder()
-//                    .userId(event.accountId())
-//                    .email(event.email())
-//                    .firstName(event.firstName())
-//                    .lastName(event.lastName())
-//                    .build());
-//
-//            rabbitTemplate.convertAndSend(
-//                    props.getExchange().getIdentity(),
-//                    props.getRoutingKey().getProfileSuccess(),
-//                    new ProfileSuccessEvent(
-//                            event.accountId()
-//                    )
-//            );
-            throw new RuntimeException("Test");
+            userProfileService.createUserProfile(UserProfileCreateRequest.builder()
+                    .userId(event.accountId())
+                    .email(event.email())
+                    .firstName(event.firstName())
+                    .lastName(event.lastName())
+                    .build());
+
+            rabbitTemplate.convertAndSend(
+                    props.getExchange().getIdentity(),
+                    props.getRoutingKey().getProfileSuccess(),
+                    new ProfileSuccessEvent(
+                            event.accountId()
+                    )
+            );
         } catch (Exception e) {
             rabbitTemplate.convertAndSend(
                     props.getExchange().getIdentity(),

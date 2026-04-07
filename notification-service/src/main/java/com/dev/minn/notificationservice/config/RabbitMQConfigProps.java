@@ -1,4 +1,4 @@
-package com.dev.minn.identityservice.config;
+package com.dev.minn.notificationservice.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -15,26 +15,21 @@ public class RabbitMQConfigProps {
     private QueueConfig queue = new QueueConfig();
     private RoutingKeyConfig routingKey = new RoutingKeyConfig();
 
-    @Getter
-    @Setter
+    @Getter @Setter
     public static class ExchangeConfig {
-        private String identity;
         private String notification;
     }
 
-    @Getter
-    @Setter
+    @Getter @Setter
     public static class QueueConfig {
-        private String profileSuccess;
-        private String profileFailed;
+        private String notification;
+        private String account;
+        private String otp;
     }
 
-    @Getter
-    @Setter
+    @Getter @Setter
     public static class RoutingKeyConfig {
-        private String accountCreated;
-        private String profileSuccess;
-        private String profileFailed;
-        private String otpAccountVerify;
+        private String account;
+        private String otp;
     }
 }

@@ -6,7 +6,6 @@ import com.dev.minn.grpc.profile.ProfileServiceGrpcGrpc;
 import com.dev.minn.identityservice.client.ProfileClient;
 import com.dev.minn.identityservice.client.dto.UserProfileCreateRequest;
 import com.dev.minn.identityservice.client.dto.UserProfileSummary;
-import com.dev.minn.identityservice.config.RabbitMQConfig;
 import com.dev.minn.identityservice.config.RabbitMQConfigProps;
 import com.dev.minn.identityservice.constant.AccountStatus;
 import com.dev.minn.identityservice.dto.ApiResponse;
@@ -19,8 +18,7 @@ import com.dev.minn.identityservice.dto.response.AccountSummary;
 import com.dev.minn.identityservice.dto.response.AuthenticationResponse;
 import com.dev.minn.identityservice.entity.Account;
 import com.dev.minn.identityservice.event.AccountCreatedEvent;
-import com.dev.minn.identityservice.event.SendRegistrationOtpEmailEvent;
-import com.dev.minn.identityservice.event.SendWelcomeEmailEvent;
+import com.dev.minn.identityservice.event.SendNotificationEvent;
 import com.dev.minn.identityservice.exception.AppException;
 import com.dev.minn.identityservice.exception.CodeException;
 import com.dev.minn.identityservice.mapper.AccountMapper;
@@ -39,6 +37,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -128,7 +127,17 @@ public class AuthenticationService {
                 TimeUnit.SECONDS
         );
 
-        eventPublisher.publishEvent(new SendRegistrationOtpEmailEvent(email, otp, OTP_INFO_TTL));
+//        eventPublisher.publishEvent(new SendRegistrationOtpEmailEvent(email, otp, OTP_INFO_TTL));
+        rabbitTemplate.convertAndSend(
+                props.getExchange().getNotification(),
+                props.getRoutingKey().getOtpAccountVerify(),
+                new SendNotificationEvent(
+                        email,
+                        Map.of(
+                                "otpCode", otp
+                        )
+                )
+        );
     }
 
     @Transactional
@@ -164,8 +173,8 @@ public class AuthenticationService {
 //        );
 
         rabbitTemplate.convertAndSend(
-               props.getExchange().getIdentity(),
-              props.getRoutingKey().getAccountCreated(),
+                props.getExchange().getIdentity(),
+                props.getRoutingKey().getAccountCreated(),
                 new AccountCreatedEvent(
                         account.getId().toString(),
                         account.getEmail(),
@@ -174,9 +183,18 @@ public class AuthenticationService {
                 )
         );
 
-        eventPublisher.publishEvent(
-                new SendWelcomeEmailEvent(account.getEmail())
+        rabbitTemplate.convertAndSend(
+                props.getExchange().getNotification(),
+                props.getRoutingKey().getAccountCreated(),
+                new SendNotificationEvent(
+                        account.getEmail(),
+                        Map.of()
+                )
         );
+
+//        eventPublisher.publishEvent(
+//                new SendWelcomeEmailEvent(account.getEmail())
+//        );
 
         return accountMapper.toSummary(account);
     }
