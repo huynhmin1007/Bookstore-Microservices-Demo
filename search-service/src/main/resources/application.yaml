@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: search-service
+  config:
+    import: "configserver:http://localhost:9999"
+  elasticsearch:
+    uris: http://localhost:9200
+
+app:
+  security:
+    public-endpoints: [ ]
+
+  rabbitmq:
+    exchange:
+      dlx: search.domain.dlx
+    queue:
+      low-priority: search.priority.low.queue
+      high-priority: search.priority.high.queue
+      dlq: search.domain.dlq
+    routing-key:
+      dlq: search.dlq.key
+
+    bindings:
+      high-priority:
+        - exchange: user.domain.exchange
+          routing-key: user.core.*
+        - exchange: book.domain.exchange
+          routing-key: book.core.*
+      low-priority:
+        - exchange: book.domain.exchange
+          routing-key: book.stats.*

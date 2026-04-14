@@ -1,0 +1,14 @@
+server:
+  port: 9999
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native # Bật chế độ đọc file Local, bỏ qua Git
+  cloud:
+    config:
+      server:
+        native:
+          # Chỉ định đường dẫn đọc cấu hình là thư mục shared-configs bên trong resources
+          search-locations: classpath:/shared-configs/

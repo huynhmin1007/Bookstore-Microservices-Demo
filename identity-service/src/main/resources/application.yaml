@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: identity-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/bookstore
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        default_batch_fetch_size: 100
+        order_updates: true
+        order_inserts: true
+
+app:
+  accounts:
+    admin:
+      email: admin@gmail.com
+      password: Admin123@
+
+  rsa:
+    private-key: classpath:certs/private.pem
+    public-key: classpath:certs/public.pem
+
+  jwt:
+    access-token-validity: 900 # access token (15 phút)
+    refresh-token-validity: 604800 # refresh token (7 ngày)
+    issuer: "minn-dev.bookstore.com"
+
+  security:
+    public-endpoints:
+      - /auth/**
+      - /public/**
+      - /jwt/.well-known/jwks.json

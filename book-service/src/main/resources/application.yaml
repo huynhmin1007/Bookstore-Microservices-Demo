@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: book-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+  data:
+    mongodb:
+      uri: mongodb://admin:root@localhost:27017/book-service?authSource=admin
+
+app:
+  security:
+    public-endpoints: [ ]

@@ -1,0 +1,6 @@
+server:
+  port: 9094
+
+grpc:
+  server:
+    port: 9194

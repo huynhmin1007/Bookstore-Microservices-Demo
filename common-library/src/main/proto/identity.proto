@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package minn.identity;
+
+option java_multiple_files = true;
+option java_package = "com.dev.minn.grpc.identity";
+
+service IdentityGrpcService {
+  rpc GetAccount (GetAccountRequest) returns (AccountResponse);
+}
+
+message GetAccountRequest {
+  string account_id = 1;
+}
+
+message AccountResponse {
+  string id = 1;
+  string email = 2;
+  repeated string roles = 3;
+}

@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: bff-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+app:
+  security:
+    public-endpoints: [ ]

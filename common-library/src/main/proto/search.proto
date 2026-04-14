@@ -1,0 +1,35 @@
+syntax = "proto3";
+package minn.search;
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "com.dev.minn.grpc.search";
+
+service SearchGrpcService {
+  rpc SearchBooks (SearchBookRequest) returns (SearchBookResponse);
+}
+
+message SearchBookRequest {
+  string keyword = 1;
+  repeated string categories = 2;
+  double min_rating = 3;
+  int32 page = 4;
+  int32 size = 5;
+  string sort_by = 6;
+  string sort_dir = 7;
+}
+
+message BookSummaryResponse {
+  string id = 1;
+  string title = 2;
+  string cover_image = 3;
+  repeated string authors = 4;
+  double rating = 5;
+  int32 reviews = 6;
+}
+
+message SearchBookResponse {
+  minn.common.PageMetadata meta = 1;
+
+  repeated BookSummaryResponse elements = 2;
+}

@@ -1,0 +1,67 @@
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      password:
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          time-between-eviction-runs: 1000ms
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 2000ms # Thử lại lần đầu sau 2s
+          max-attempts: 3           # Thử tối đa 3 lần
+          multiplier: 2.0          # Mỗi lần sau chờ gấp đôi lần trước (2s, 4s, 8s)
+          max-interval: 10000ms    # Không chờ quá 10s
+
+grpc:
+  client:
+    profile-service:
+      address: 'static://localhost:9192'
+      negotiation-type: plaintext
+    identity-service:
+      address: 'static://localhost:9191'
+      negotiation-type: plaintext
+    search-service:
+      address: 'static://localhost:9194'
+      negotiation-type: plaintext
+
+app:
+  rabbitmq:
+    exchanges:
+      user: user.domain.exchange
+      book: book.domain.exchange
+      notification: notification.domain.exchange
+      search: search.domain.exchange
+    routing-keys:
+      otp: notification.otp.*
+      notification: notification.events.*
+      dlq: dlq.key
+      user: user.events.*
+      book: book.events.*
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0 # Bắt buộc phải có để 100% request đều có traceId

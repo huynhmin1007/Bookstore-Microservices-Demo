@@ -1,74 +1,13 @@
-# =========================
-# IntelliJ IDEA
-# =========================
+# IDE
 .idea/
 *.iml
 
-# =========================
-# Build outputs
-# =========================
+# Build
 target/
 build/
-out/
 
-# =========================
-# Logs
-# =========================
-*.log
-
-# =========================
-# OS files
-# =========================
-.DS_Store
-Thumbs.db
-
-# =========================
-# Docker
-# =========================
-*.pid
-*.seed
-*.tmp
-
-# =========================
-# Environment & Secrets
-# =========================
-# Env files
-.env
-*.env
-
-# Secret YAML configs
-application.yaml
-*.secret.yaml
-certs
-
-# =========================
-# Node / Frontend (nếu có)
-# =========================
-node_modules/
-dist/
-
-# =========================
-# Python (nếu có service Python)
-# =========================
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
-
-# =========================
-# Java / Gradle / Maven
-# =========================
-*.class
-*.jar
-*.war
-*.ear
-.gradle/
-*.swp
-
-# =========================
-# Backup & Temp
-# =========================
-*.bak
-*.tmp
-*.swp
+# Secrets (Chặn tuyệt đối file gây lỗi)
+notification-service/src/main/resources/application.yaml
+**/src/main/resources/*.yaml
+**/src/main/resources/*.yml
+**/src/main/resources/certs

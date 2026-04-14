@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: api-gateway
+  config:
+    import: "configserver:http://localhost:9999"
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:9091/jwt/.well-known/jwks.json
+
+  cloud:
+    gateway:
+      routes:
+        - id: identity-service
+          uri: lb://identity-service
+          predicates:
+            - Path=${app.api}/identity/**
+          filters:
+            - StripPrefix=2
+
+        - id: profile-service
+          uri: lb://profile-service
+          predicates:
+            - Path=${app.api}/profile/**
+          filters:
+            - StripPrefix=2
+
+        - id: bff-service
+          uri: lb://bff-service
+          predicates:
+            - Path=${app.api}/bff/**
+          filters:
+            - StripPrefix=2
+      default-filters:
+        - RemoveRequestHeader=Authorization
+
+app:
+  api: /bookstore-api
+
+  security:
+    filters:
+      - blacklist-order: -1
+      - permissions-order: 10
+
+    public-endpoints:
+      - ${app.api}/identity/auth/**
+      - /public/**
+      - /auth/**
