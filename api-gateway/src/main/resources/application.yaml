@@ -33,6 +33,13 @@ spring:
             - Path=${app.api}/bff/**
           filters:
             - StripPrefix=2
+
+        - id: cart-service
+          uri: lb://cart-service
+          predicates:
+            - Path=${app.api}/cart/**
+          filters:
+            - StripPrefix=2
       default-filters:
         - RemoveRequestHeader=Authorization
 
