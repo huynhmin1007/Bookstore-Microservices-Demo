@@ -21,7 +21,17 @@
         <module name="config-server" />
         <module name="discovery-server" />
       </profile>
-      <profile name="Annotation profile for cart-service" enabled="true">
+      <profile name="Annotation profile for common-messaging" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="false">
+          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
+        </processorPath>
+        <module name="api-gateway" />
+        <module name="common-messaging" />
+      </profile>
+      <profile name="Annotation profile for order-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -35,18 +45,9 @@
         <module name="book-service" />
         <module name="search-service" />
         <module name="profile-service" />
+        <module name="order-service" />
         <module name="identity-service" />
         <module name="notification-service" />
-      </profile>
-      <profile name="Annotation profile for common-messaging" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
-        </processorPath>
-        <module name="api-gateway" />
-        <module name="common-messaging" />
       </profile>
     </annotationProcessing>
   </component>
@@ -63,6 +64,7 @@
       <module name="discovery-server" options="-parameters" />
       <module name="identity-service" options="-parameters" />
       <module name="notification-service" options="-parameters" />
+      <module name="order-service" options="-parameters" />
       <module name="profile-service" options="-parameters" />
       <module name="search-service" options="-parameters" />
     </option>
