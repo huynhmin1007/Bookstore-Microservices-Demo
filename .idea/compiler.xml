@@ -45,6 +45,7 @@
         <module name="bff" />
         <module name="book-service" />
         <module name="search-service" />
+        <module name="promotion-service" />
         <module name="profile-service" />
         <module name="order-service" />
         <module name="identity-service" />
@@ -68,6 +69,7 @@
       <module name="notification-service" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="profile-service" options="-parameters" />
+      <module name="promotion-service" options="-parameters" />
       <module name="search-service" options="-parameters" />
     </option>
   </component>
