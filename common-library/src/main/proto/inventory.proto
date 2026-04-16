@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package bookstore.inventory;
+
+option java_multiple_files = true;
+option java_package = "com.bookstore.common.grpc.inventory";
+
+service InventoryGrpcService {
+  rpc GetProductDetails (ProductDetailsRequest) returns (ProductDetailsResponse);
+}
+
+message ProductDetailsRequest {
+  repeated string product_ids = 1;
+}
+
+message ProductDetailsResponse {
+  repeated ProductItem items = 1;
+}
+
+message ProductItem {
+  string product_id = 1;
+  string price = 2;
+  int32 available_quantity = 3;
+  bool is_stock_available = 4;
+}
