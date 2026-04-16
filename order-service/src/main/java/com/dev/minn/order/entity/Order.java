@@ -27,6 +27,7 @@ public class Order extends BaseEntity<UUID> {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
     UUID id;
 
     @Column(name = "customer_id", nullable = false)

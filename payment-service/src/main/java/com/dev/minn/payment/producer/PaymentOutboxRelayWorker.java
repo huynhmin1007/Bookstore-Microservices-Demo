@@ -1,11 +1,10 @@
-package com.dev.minn.inventory.producer;
+package com.dev.minn.payment.producer;
 
 import com.dev.minn.common.messaging.dto.MessageEnvelope;
 import com.dev.minn.common.messaging.entity.OutboxEvent;
 import com.dev.minn.common.messaging.repository.OutboxRepository;
-import com.dev.minn.inventory.config.RabbitMQConfig;
+import com.dev.minn.payment.config.RabbitMQConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +18,14 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class InventoryOutboxRelayWorker {
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
+public class PaymentOutboxRelayWorker {
 
     OutboxRepository outboxRepository;
     RabbitTemplate rabbitTemplate;
     ObjectMapper objectMapper;
 
-    @Scheduled(fixedDelay = 2000) // Quét mỗi 2 giây
+    @Scheduled(fixedDelay = 2000)
     public void relayPendingMessage() {
         List<OutboxEvent> pendingEvents = outboxRepository.findTop100ByStatusOrderByCreatedAtAsc(OutboxEvent.OutboxStatus.PENDING);
 
@@ -38,7 +37,7 @@ public class InventoryOutboxRelayWorker {
                         .messageId(event.getId().toString())
                         .correlationId(event.getAggregateId())
                         .messageType(event.getEventType())
-                        .source("inventory-service")
+                        .source("order-service")
                         .payload(objectMapper.readTree(event.getPayload()))
                         .build();
 

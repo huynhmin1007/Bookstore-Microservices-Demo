@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReleaseInventoryCommand {
+public class DeductInventoryCommand {
     String orderId;
     List<ReserveInventoryCommand.Item> items;
 }

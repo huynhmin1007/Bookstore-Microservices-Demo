@@ -1,12 +1,11 @@
 package com.dev.minn.order.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
@@ -18,6 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@EntityListeners(AuditingEntityListener.class)
 public class SagaInstance {
 
     @Id
@@ -30,7 +30,11 @@ public class SagaInstance {
     @Column(name = "saga_payload", columnDefinition = "TEXT")
     String sagaPayload;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    Instant createdAt;
+
     @LastModifiedDate
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
     Instant updatedAt;
 }

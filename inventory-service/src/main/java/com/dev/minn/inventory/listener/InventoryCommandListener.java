@@ -35,6 +35,8 @@ public class InventoryCommandListener {
     @Transactional
     @RabbitListener(queues = RabbitMQConfig.INVENTORY_CMD_QUEUE)
     public void handleCommand(MessageEnvelope<JsonNode> envelope) {
+        log.info("Received command: {}", envelope.getMessageType());
+
         String messageId = envelope.getMessageId();
 
         if (processedEventRepository.existsByMessageIdAndConsumerName(messageId, "InventoryListener")) {
