@@ -33,6 +33,8 @@ public enum CodeException {
     RESOURCE_NOT_FOUND(2012, "Resource not found", HttpStatus.NOT_FOUND),
     BOOK_NOT_FOUND(2013, "Book not found", HttpStatus.NOT_FOUND),
     OUT_OF_STOCK(2014, "Product is out of stock", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_FOUND(2015, "Order not found", HttpStatus.NOT_FOUND),
+    SAGA_NOT_FOUND(2016, "Saga not found", HttpStatus.NOT_FOUND),
 
     // 3xxx — Role & Permission
     ROLE_NOT_FOUND(3001, "Role not found", HttpStatus.NOT_FOUND),
