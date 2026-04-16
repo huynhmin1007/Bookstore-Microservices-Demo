@@ -31,7 +31,7 @@
         <module name="api-gateway" />
         <module name="common-messaging" />
       </profile>
-      <profile name="Annotation profile for inventory-service" enabled="true">
+      <profile name="Annotation profile for promotion-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />

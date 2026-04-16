@@ -48,6 +48,9 @@ grpc:
     search-service:
       address: 'static://localhost:9194'
       negotiation-type: plaintext
+    inventory-service:
+      address: 'static://localhost:9199'
+      negotiation-type: plaintext
 
 app:
   rabbitmq:

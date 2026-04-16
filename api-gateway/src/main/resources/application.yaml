@@ -40,6 +40,13 @@ spring:
             - Path=${app.api}/cart/**
           filters:
             - StripPrefix=2
+
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=${app.api}/order/**
+          filters:
+            - StripPrefix=2
       default-filters:
         - RemoveRequestHeader=Authorization
 
