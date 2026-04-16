@@ -55,7 +55,7 @@ public class OrderEventListener {
                     .payload(typedPayload)
                     .build();
 
-            strategy.handle(rawEnvelope);
+            strategy.handle(typedEnvelope);
         } catch (Exception e) {
             log.error("Failed to process event: {}, Order: {}", eventType, e, rawEnvelope.getCorrelationId());
             throw new RuntimeException("Failed to process event", e);

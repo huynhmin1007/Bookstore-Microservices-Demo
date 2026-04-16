@@ -2,7 +2,7 @@ package com.dev.minn.order.service;
 
 import com.dev.minn.common.exception.CodeException;
 import com.dev.minn.common.messaging.contract.command.CreatePaymentCommand;
-import com.dev.minn.common.messaging.contract.command.ReleaseInventoryCommand;
+import com.dev.minn.common.messaging.contract.command.DeductInventoryCommand;
 import com.dev.minn.common.messaging.contract.command.ReserveInventoryCommand;
 import com.dev.minn.common.messaging.entity.OutboxEvent;
 import com.dev.minn.common.messaging.repository.OutboxRepository;
@@ -157,10 +157,10 @@ public class OrderService {
                 new TypeReference<List<ReserveInventoryCommand.Item>>() {}
         );
 
-        ReleaseInventoryCommand releaseCommand = new ReleaseInventoryCommand(orderId, items);
-        saveToOutbox(orderId, "RELEASE_INVENTORY_CMD", "inventory.cmd", releaseCommand);
+        DeductInventoryCommand deductCommand = new DeductInventoryCommand(orderId, items);
+        saveToOutbox(orderId, "DEDUCT_INVENTORY_CMD", "inventory.cmd", deductCommand);
 
-        log.info("Order completed. Order: {}. Inventory released.", orderId);
+        log.info("Order completed. Order: {}. Inventory deduct.", orderId);
     }
 
     private void saveToOutbox(String orderId, String eventType, String routingKey, Object payload) {

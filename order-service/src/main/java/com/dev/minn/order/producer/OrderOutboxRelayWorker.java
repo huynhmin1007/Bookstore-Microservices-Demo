@@ -43,14 +43,12 @@ public class OrderOutboxRelayWorker {
                         .payload(objectMapper.readTree(event.getPayload()))
                         .build();
 
-                String jsonMessage = objectMapper.writeValueAsString(envelope);
-
                 CorrelationData correlationData = new CorrelationData(event.getId().toString());
 
                 rabbitTemplate.convertAndSend(
                         RabbitMQConfig.BOOKSTORE_EVENT_BUS,
                         event.getRoutingKey(),
-                        jsonMessage,
+                        envelope,
                         correlationData
                 );
             } catch (Exception e) {

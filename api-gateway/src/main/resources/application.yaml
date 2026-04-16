@@ -47,6 +47,13 @@ spring:
             - Path=${app.api}/order/**
           filters:
             - StripPrefix=2
+
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=${app.api}/payment/**
+          filters:
+            - StripPrefix=2
       default-filters:
         - RemoveRequestHeader=Authorization
 

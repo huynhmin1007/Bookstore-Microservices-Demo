@@ -1,8 +1,8 @@
-package com.dev.minn.inventory.strategy.impl;
+package com.dev.minn.inventory.strategy;
 
-import com.dev.minn.common.messaging.contract.command.ReserveInventoryCommand;
-import com.dev.minn.common.messaging.contract.event.InventoryReserveFailedEvent;
-import com.dev.minn.common.messaging.contract.event.InventoryReservedEvent;
+import com.dev.minn.common.messaging.contract.command.DeductInventoryCommand;
+import com.dev.minn.common.messaging.contract.event.InventoryFailedEvent;
+import com.dev.minn.common.messaging.contract.event.InventorySuccessEvent;
 import com.dev.minn.common.messaging.dto.MessageEnvelope;
 import com.dev.minn.common.messaging.entity.OutboxEvent;
 import com.dev.minn.common.messaging.repository.OutboxRepository;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
-public class ReserveInventoryStrategy implements EventHandlerStrategy<ReserveInventoryCommand> {
+public class DeductInventoryStrategy implements EventHandlerStrategy<DeductInventoryCommand> {
 
     ObjectMapper objectMapper;
     OutboxRepository outboxRepository;
@@ -27,34 +27,32 @@ public class ReserveInventoryStrategy implements EventHandlerStrategy<ReserveInv
 
     @Override
     public boolean supports(String eventType) {
-        return "RESERVE_INVENTORY_CMD".equalsIgnoreCase(eventType);
+        return "DEDUCT_INVENTORY_CMD".equalsIgnoreCase(eventType);
     }
 
     @Override
-    public Class<ReserveInventoryCommand> getPayloadClass() {
-        return ReserveInventoryCommand.class;
+    public Class<DeductInventoryCommand> getPayloadClass() {
+        return DeductInventoryCommand.class;
     }
 
     @Override
-    public void handle(MessageEnvelope<ReserveInventoryCommand> envelope) {
-        log.info("Received ReserveInventoryCommand: {}", envelope.getPayload());
-
-        ReserveInventoryCommand command = envelope.getPayload();
+    public void handle(MessageEnvelope<DeductInventoryCommand> envelope) {
+        DeductInventoryCommand command = envelope.getPayload();
         String orderId = command.getOrderId();
 
         try {
-            inventoryService.reserveStock(command.getItems());
+            inventoryService.confirmDeductStock(command.getItems());
 
-            InventoryReservedEvent successEvent = new InventoryReservedEvent(orderId, "SUCCESS");
-            saveOutbox(orderId, "INVENTORY_RESERVED_EVT", successEvent);
+            InventorySuccessEvent successEvent = new InventorySuccessEvent(orderId, "SUCCESS");
+            saveOutbox(orderId, "INVENTORY_DEDUCTED_EVT", successEvent);
 
-            log.info("Reserved Successful for Order: {}", orderId);
+            log.info("Confirm deducted Successful for Order: {}", orderId);
 
         } catch (Exception e) {
-            log.error("Failed reserved for Order {}. Error: {}", orderId, e.getMessage());
+            log.error("Failed deduct for Order {}. Error: {}", orderId, e.getMessage());
 
-            InventoryReserveFailedEvent failedEvent = new InventoryReserveFailedEvent(orderId, e.getMessage());
-            saveOutbox(orderId, "INVENTORY_RESERVE_FAILED_EVT", failedEvent);
+            InventoryFailedEvent failedEvent = new InventoryFailedEvent(orderId, e.getMessage());
+            saveOutbox(orderId, "INVENTORY_DEDUCTED_FAILED_EVT", failedEvent);
         }
     }
 
