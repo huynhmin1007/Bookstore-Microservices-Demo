@@ -1,6 +1,7 @@
 package com.dev.minn.book.service;
 
 import com.dev.minn.book.config.RabbitMQConfigProps;
+import com.dev.minn.book.event.BookCreatedEvent;
 import com.dev.minn.book.mapper.BookMapper;
 import com.dev.minn.book.node.Book;
 import com.dev.minn.book.repository.BookRepository;
@@ -93,11 +94,21 @@ public class DataInitService {
 
         log.info("Đã tạo và lưu thành công {} cuốn sách vào MongoDB!", fakeBooks.size());
 
-        fakeBooks.forEach(book -> {
+        List<BookCreatedEvent> bookEventList = fakeBooks.stream()
+                .map(bookMapper::toEvent)
+                .map(book -> {
+                    book.setQuantity(faker.number().numberBetween(1, 100));
+                    book.setPrice(faker.number().randomDouble(2, 50000, 500000));
+
+                    return book;
+                })
+                .toList();
+
+        bookEventList.forEach(book -> {
             EventEnvelope envelope = EventEnvelope.builder()
                     .eventType("BOOK_CREATED")
                     .source("book-service")
-                    .payload(objectMapper.convertValue(bookMapper.toEvent(book), JsonNode.class))
+                    .payload(objectMapper.convertValue(book, JsonNode.class))
                     .build();
 
             rabbitTemplate.convertAndSend(

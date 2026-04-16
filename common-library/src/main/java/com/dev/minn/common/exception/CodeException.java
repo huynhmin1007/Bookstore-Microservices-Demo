@@ -31,6 +31,7 @@ public enum CodeException {
     INVALID_CREDENTIALS(2010, "Invalid credentials", HttpStatus.UNAUTHORIZED),
     PROFILE_CREATION_FAILED(2011, "Failed to create profile", HttpStatus.INTERNAL_SERVER_ERROR),
     RESOURCE_NOT_FOUND(2012, "Resource not found", HttpStatus.NOT_FOUND),
+    BOOK_NOT_FOUND(2013, "Book not found", HttpStatus.NOT_FOUND),
 
     // 3xxx — Role & Permission
     ROLE_NOT_FOUND(3001, "Role not found", HttpStatus.NOT_FOUND),

@@ -25,7 +25,7 @@ import java.util.UUID;
 public class OutboxEvent extends BaseEntity<UUID> {
 
     @Id
-    @Column(name = "id", columnDefinition = "BINARY(16)", updatable = false, nullable = false)
+    @Column(name = "id", updatable = false, nullable = false)
     UUID id;
 
     @Column(name = "aggregate_type", nullable = false)
