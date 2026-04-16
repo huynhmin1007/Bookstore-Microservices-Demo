@@ -21,7 +21,7 @@ public class InventoryService {
     InventoryRepository inventoryRepository;
 
     @Transactional
-    public void reverseStock(List<ReserveInventoryCommand.Item> items) {
+    public void reserveStock(List<ReserveInventoryCommand.Item> items) {
         for(ReserveInventoryCommand.Item itemDto : items) {
             InventoryItem item = inventoryRepository.findByProductId(itemDto.getProductId())
                     .orElseThrow(CodeException.BOOK_NOT_FOUND::throwException);

@@ -17,7 +17,7 @@ public class CheckoutController {
 
     CheckoutService checkoutService;
 
-    @PostMapping
+    @PostMapping("/preview")
     public CheckoutPreviewResponse preview(
             @RequestHeader("X-Account-Id") String userId,
             @Valid @RequestBody PreviewCheckoutRequest request
