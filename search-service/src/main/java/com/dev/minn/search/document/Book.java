@@ -71,4 +71,13 @@ public class Book {
 
     @Field(type = FieldType.Keyword, index = false)
     String coverImage;
+
+    @Field(type = FieldType.Integer)
+    int quantity;
+
+    @Field(
+            type = FieldType.Scaled_Float,
+            scalingFactor = 100
+    )
+    double price;
 }

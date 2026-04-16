@@ -16,6 +16,8 @@ public record BookCreatedEvent(
         Integer reviews,
         Double rating,
         boolean isActive,
-        String coverImage
+        String coverImage,
+        int quantity,
+        double price
 ) {
 }
