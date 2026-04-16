@@ -1,2 +1,6 @@
 server:
   port: 9098
+
+grpc:
+  server:
+    port: 9198
