@@ -18,10 +18,9 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
-        <module name="config-server" />
         <module name="discovery-server" />
       </profile>
-      <profile name="Annotation profile for common-messaging" enabled="true">
+      <profile name="Annotation profile for config-server" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -29,9 +28,10 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.36/lombok-1.18.36.jar" />
         </processorPath>
         <module name="api-gateway" />
+        <module name="config-server" />
         <module name="common-messaging" />
       </profile>
-      <profile name="Annotation profile for payment-service" enabled="true">
+      <profile name="Annotation profile for search-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -46,6 +46,7 @@
         <module name="bff" />
         <module name="book-service" />
         <module name="search-service" />
+        <module name="bff-service" />
         <module name="promotion-service" />
         <module name="profile-service" />
         <module name="order-service" />
@@ -58,6 +59,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="api-gateway" options="-parameters" />
       <module name="bff" options="-parameters" />
+      <module name="bff-service" options="-parameters" />
       <module name="book-service" options="-parameters" />
       <module name="cart-service" options="-parameters" />
       <module name="common-library" options="-parameters" />
