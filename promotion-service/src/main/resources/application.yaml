@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: promotion-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/promotion_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 50
+        default_batch_fetch_size: 100
+        order_updates: true
+        order_inserts: true
+
+app:
+  security:
+    public-endpoints: [ ]

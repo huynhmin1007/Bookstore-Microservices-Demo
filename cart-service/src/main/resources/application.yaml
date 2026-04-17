@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: cart-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+app:
+  security:
+    public-endpoints: []

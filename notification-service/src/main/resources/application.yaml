@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: notification-service
+  config:
+    import: "configserver:http://localhost:9999"
+
+  data:
+    mongodb:
+      uri: mongodb://admin:root@localhost:27017/notification-service?authSource=admin
+
+client:
+  email-client:
+    base-url: https://api.brevo.com
+    send-email-path: /v3/smtp/email
+
+app:
+  security:
+    public-endpoints: [ ]
+
+  email: huynhmin1007@gmail.com
+  name: Minn Dev
+  keys:
+    brevo:
+
+  rabbitmq:
+    exchanges:
+      dlx: notification.domain.dlx
+    queues:
+      otp: notification.otp.queue
+      notification: notification.events.queue
+      dlq: notification.events.dlq
