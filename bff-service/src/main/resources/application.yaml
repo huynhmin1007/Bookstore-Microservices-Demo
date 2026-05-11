@@ -1,12 +1,16 @@
 server:
-  port: 9006
+  port: 9001
+
+grpc:
+  server:
+    port: 9100
 
 spring:
   application:
-    name: cart-service
+    name: bff-service
   config:
     import: "optional:configserver:http://config-server:9999"
 
 app:
   security:
-    public-endpoints: []
+    public-endpoints: [ ]

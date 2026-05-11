@@ -85,3 +85,158 @@ This project implements a microservices architecture for a bookstore application
 - **Reliable Messaging**: Outbox pattern ensures message delivery guarantees
 - **Flexible Event Processing**: Strategy pattern for extensible event handling
 
+## Prerequisites
+
+Before running the application, ensure you have the following installed:
+
+- **Java 21**: Required for building and running the services
+- **Maven 3.6+**: For dependency management and building
+- **Docker & Docker Compose**: For containerized deployment
+- **External Services** (if not using full infrastructure):
+  - MongoDB (for data persistence)
+  - Redis (for caching)
+  - RabbitMQ (for messaging)
+  - Elasticsearch (for search functionality)
+
+## Getting Started
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/your-username/bookstore-microservices-demo.git
+cd bookstore-microservices-demo
+```
+
+### Configuration
+
+The application uses Spring Cloud Config for centralized configuration. Configuration files are located in the `config-server` service.
+
+For local development, you may need to set up environment-specific configurations.
+
+### Running the Application
+
+#### Option 1: Using Docker Compose (Recommended for Internal Services)
+
+This setup runs only the microservices in containers. Ensure external dependencies (MongoDB, Redis, RabbitMQ, Elasticsearch) are running separately.
+
+1. Build the services:
+   ```bash
+   mvn clean package -DskipTests
+   ```
+
+2. Start the services with Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+
+   This will start all microservices in the correct order based on dependencies.
+
+3. Access the services:
+   - API Gateway: http://localhost:9000
+   - Eureka Discovery Server: http://localhost:8761
+   - Config Server: http://localhost:9999
+   - BFF Service: http://localhost:9001
+   - And other services on their respective ports (9002-9009)
+
+#### Option 2: Running Locally with Maven
+
+For development purposes, you can run services individually:
+
+1. Start external dependencies (MongoDB, Redis, etc.) locally or via Docker.
+
+2. Start the Config Server:
+   ```bash
+   cd config-server
+   mvn spring-boot:run
+   ```
+
+3. Start the Discovery Server:
+   ```bash
+   cd discovery-server
+   mvn spring-boot:run
+   ```
+
+4. Start other services in any order:
+   ```bash
+   cd <service-name>
+   mvn spring-boot:run
+   ```
+
+### Full Infrastructure Setup
+
+For a complete setup including databases and messaging, you would need to extend the docker-compose.yml to include:
+
+- MongoDB
+- Redis
+- RabbitMQ
+- Elasticsearch
+
+Example additional services:
+
+```yaml
+mongodb:
+  image: mongo:7.0
+  ports:
+    - "27017:27017"
+  networks:
+    - bookteria-network
+
+redis:
+  image: redis:7-alpine
+  ports:
+    - "6379:6379"
+  networks:
+    - bookteria-network
+
+rabbitmq:
+  image: rabbitmq:3-management-alpine
+  ports:
+    - "5672:5672"
+    - "15672:15672"
+  networks:
+    - bookteria-network
+
+elasticsearch:
+  image: elasticsearch:8.11.0
+  environment:
+    - discovery.type=single-node
+    - xpack.security.enabled=false
+  ports:
+    - "9200:9200"
+  networks:
+    - bookteria-network
+```
+
+## API Documentation
+
+Once the services are running, you can access API documentation via Swagger UI:
+
+- API Gateway: http://localhost:9000/swagger-ui.html
+- Individual services: http://localhost:<port>/swagger-ui.html
+
+## Monitoring and Observability
+
+- **Distributed Tracing**: Integrated with Micrometer and Brave
+- **Health Checks**: Available at `/actuator/health` for each service
+- **Metrics**: Exposed via `/actuator/metrics`
+- **Eureka Dashboard**: Service discovery dashboard at http://localhost:8761
+
+## Testing
+
+Run tests for all services:
+
+```bash
+mvn test
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Run tests
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.

@@ -1,14 +1,20 @@
+server:
+  port: 9007
+
 spring:
   application:
     name: profile-service
   config:
-    import: "configserver:http://localhost:9999"
+    import: "optional:configserver:http://config-server:9999"
 
   neo4j:
-    uri: bolt://localhost:7687
+    uri: bolt://host.docker.internal:7687
     authentication:
       username: neo4j
       password: 123456789
+
+  rabbitmq:
+    host: host.docker.internal
 
 app:
   security:

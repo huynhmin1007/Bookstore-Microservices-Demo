@@ -1,16 +1,17 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_SERVER:discovery-server}:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
   instance:
     prefer-ip-address: true
+    hostname: ${HOSTNAME:unknown}
 
 spring:
   data:
     redis:
-      host: localhost
+      host: host.docker.internal
       port: 6379
       password:
       database: 0
@@ -22,7 +23,7 @@ spring:
           time-between-eviction-runs: 1000ms
 
   rabbitmq:
-    host: localhost
+    host: host.docker.internal
     port: 5672
     username: guest
     password: guest
@@ -32,24 +33,24 @@ spring:
       simple:
         retry:
           enabled: true
-          initial-interval: 2000ms # Thử lại lần đầu sau 2s
-          max-attempts: 3           # Thử tối đa 3 lần
-          multiplier: 2.0          # Mỗi lần sau chờ gấp đôi lần trước (2s, 4s, 8s)
-          max-interval: 10000ms    # Không chờ quá 10s
+          initial-interval: 2000ms
+          max-attempts: 3
+          multiplier: 2.0
+          max-interval: 10000ms
 
 grpc:
   client:
-    profile-service:
-      address: 'static://localhost:9192'
-      negotiation-type: plaintext
     identity-service:
-      address: 'static://localhost:9191'
+      address: 'static://identity-service:9091'
+      negotiation-type: plaintext
+    profile-service:
+      address: 'static://profile-service:9007'
       negotiation-type: plaintext
     search-service:
-      address: 'static://localhost:9194'
+      address: 'static://search-service:9008'
       negotiation-type: plaintext
     inventory-service:
-      address: 'static://localhost:9199'
+      address: 'static://inventory-service:9101'
       negotiation-type: plaintext
 
 app:

@@ -1,12 +1,18 @@
+server:
+  port: 9009
+
 spring:
   application:
     name: notification-service
   config:
-    import: "configserver:http://localhost:9999"
+    import: "optional:configserver:http://config-server:9999"
 
   data:
     mongodb:
-      uri: mongodb://admin:root@localhost:27017/notification-service?authSource=admin
+      uri: mongodb://admin:root@host.docker.internal:27017/notification-service?authSource=admin
+
+  rabbitmq:
+    host: host.docker.internal
 
 client:
   email-client:
@@ -20,7 +26,7 @@ app:
   email: huynhmin1007@gmail.com
   name: Minn Dev
   keys:
-    brevo:
+    brevo: <your_api_key>
 
   rabbitmq:
     exchanges:

@@ -1,6 +1,2 @@
-server:
-  port: 9094
+# Placeholder config for search-service
 
-grpc:
-  server:
-    port: 9194

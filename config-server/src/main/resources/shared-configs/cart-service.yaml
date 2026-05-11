@@ -1,6 +1,2 @@
-server:
-  port: 9097
+# Placeholder config for cart-service
 
-grpc:
-  server:
-    port: 9197
