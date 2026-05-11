@@ -1,6 +1,2 @@
-server:
-  port: 9092
+# Placeholder config for profile-service
 
-grpc:
-  server:
-    port: 9192

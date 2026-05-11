@@ -1,6 +1,2 @@
-server:
-  port: 9098
+# Placeholder config for order-service
 
-grpc:
-  server:
-    port: 9198

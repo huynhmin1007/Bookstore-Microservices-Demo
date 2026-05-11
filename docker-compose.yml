@@ -1,0 +1,182 @@
+version: '3.8'
+
+services:
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    ports:
+      - "9999:9999"
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  discovery-server:
+    build: ./discovery-server
+    container_name: discovery-server
+    ports:
+      - "8761:8761"
+    depends_on:
+      - config-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+    healthcheck:
+      test: [ "CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:8761/actuator/health || exit 1" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "9000:9000"
+    depends_on:
+      - config-server
+      - discovery-server
+      - identity-service
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  bff-service:
+    build: ./bff-service
+    container_name: bff-service
+    ports:
+      - "9001:9001"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  identity-service:
+    build: ./identity-service
+    container_name: identity-service
+    ports:
+      - "9091:9091"
+    depends_on:
+      config-server:
+        condition: service_started
+      discovery-server:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  book-service:
+    build: ./book-service
+    container_name: book-service
+    ports:
+      - "9003:9003"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  inventory-service:
+    build: ./inventory-service
+    container_name: inventory-service
+    ports:
+      - "9002:9002"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "9004:9004"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  payment-service:
+    build: ./payment-service
+    container_name: payment-service
+    ports:
+      - "9005:9005"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  cart-service:
+    build: ./cart-service
+    container_name: cart-service
+    ports:
+      - "9006:9006"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  profile-service:
+    build: ./profile-service
+    container_name: profile-service
+    ports:
+      - "9007:9007"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  search-service:
+    build: ./search-service
+    container_name: search-service
+    ports:
+      - "9008:9008"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "9009:9009"
+    depends_on:
+      - config-server
+      - discovery-server
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - bookteria-network
+
+networks:
+  bookteria-network:
+    driver: bridge

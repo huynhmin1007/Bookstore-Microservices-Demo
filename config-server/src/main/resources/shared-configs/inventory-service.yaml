@@ -1,6 +1,2 @@
-server:
-  port: 9099
+# Placeholder config for inventory-service
 
-grpc:
-  server:
-    port: 9199

@@ -1,6 +1,4 @@
-server:
-  port: 9091
+# Placeholder config for identity-service
 
-grpc:
-  server:
-    port: 9191
+
+
